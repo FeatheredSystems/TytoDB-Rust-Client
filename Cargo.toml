@@ -1,0 +1,15 @@
+[package]
+name = "tytodb-conn"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+async-std = "1.13.1"
+falcotcp = { version="0.1.0", default-features = false, features = [] }
+zstd = "0.13.3"
+
+[features]
+default = ["asyncstd"]
+thread = ["falcotcp/thread"]
+tokio = ["falcotcp/tokio-runtime"]
+asyncstd = ["falcotcp/async-std-runtime"]
