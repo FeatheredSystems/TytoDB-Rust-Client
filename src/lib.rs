@@ -5,7 +5,7 @@ pub mod albastream;
 pub mod handler;
 pub mod dynamic_int;
 pub mod db_response;
-
+pub use types::*;
 #[cfg(feature="thread")]
 pub mod client_thread;
 #[cfg(feature="tokio")]

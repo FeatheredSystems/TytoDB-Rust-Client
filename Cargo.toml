@@ -5,10 +5,10 @@ edition = "2024"
 
 [dependencies]
 falcotcp = { version="0.1.0", default-features = false, features = [] }
-zstd = "0.13.3"
+tokio = {version="1",features=["full"], optional = true}
 
 [features]
 default = []
 thread = ["falcotcp/thread"]
-tokio = ["falcotcp/tokio-runtime"]
+tokio = ["falcotcp/tokio-runtime","dep:tokio"]
 asyncstd = ["falcotcp/async-std-runtime"]
