@@ -1,7 +1,10 @@
 [package]
-name = "tytodb-conn"
+name = "tytodb-client"
 version = "0.1.0"
 edition = "2024"
+description = "A connection handler for TytoDB."
+repository = "https://github.com/FeatheredSystems/TytoDB-Rust-Client"
+license = "Apache-2.0"
 
 [dependencies]
 falcotcp = { version="0.1.0", default-features = false, features = [] }
