@@ -480,31 +480,31 @@ impl Compile for DeleteContainer{
 
 
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct CreateContainer{
+pub struct CreateContainer{
     pub name : String,
     pub col_nam : Vec<String>,
     pub col_val : Vec<u8>,
 }
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct CreateRow{
+pub struct CreateRow{
     pub col_nam : Vec<String>,
     pub col_val : Vec<AlbaTypes>,
     pub container : String
 }
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct EditRow{
+pub struct EditRow{
     pub col_nam : Vec<String>,
     pub col_val : Vec<AlbaTypes>,
     pub container : String,
     pub conditions : (Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(u8,char)>)
 }
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct DeleteRow{
+pub struct DeleteRow{
     pub container : String,
     pub conditions : Option<(Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(usize,char)>)>
 }
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct DeleteContainer{
+pub struct DeleteContainer{
     pub container : String,
 }
 
@@ -553,7 +553,7 @@ impl <T:Compile+StandAloneDecompile> Compile for Vec<T>  {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct Search{
+pub struct Search{
     pub container : AlbaContainer,
     pub conditions : (Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(u8,char)>),
     pub col_nam : Vec<String>,
@@ -717,7 +717,7 @@ impl StandAloneDecompile for Search {
 
 
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct Commit{
+pub struct Commit{
     pub container : Option<String>,
 }
 
@@ -738,7 +738,7 @@ impl Compile for Commit{
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct Rollback{
+pub struct Rollback{
     pub container : Option<String>,
 }
 impl Compile for Rollback{
@@ -758,7 +758,7 @@ impl Compile for Rollback{
 
 
 #[derive(Debug,Clone,PartialEq)]
-pub(crate) struct BatchCreateRows{
+pub struct BatchCreateRows{
     pub col_nam : Vec<String>,
     pub col_val : Vec<Vec<AlbaTypes>>,
     pub container : String
@@ -794,7 +794,7 @@ impl Compile for BatchCreateRows{
 }
 
 #[derive(Debug,Clone,PartialEq)]
-pub(crate) struct Batch{
+pub struct Batch{
     pub transaction : bool,
     pub commands : Vec<Commands>,
 }
@@ -821,6 +821,16 @@ impl Compile for Batch{
     }
 }
 impl Batch{
+    pub fn new(transaction: bool) -> Self {
+        Self {
+            transaction,
+            commands: Vec::new(),
+        }
+    }
+
+    pub fn push(&mut self, command: Commands) {
+        self.commands.push(command);
+    }
     pub(crate) fn decompile(bytes: &[u8]) -> Result<Self, Error> {
         if bytes.is_empty() {
             return Err(Error::new(ErrorKind::InvalidInput, "Empty byte array"));

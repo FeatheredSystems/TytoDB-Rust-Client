@@ -338,9 +338,8 @@ impl ToAlbaAlbaTypes for &str{
 #[macro_export]
 macro_rules! alba {
     (str: $val:expr) => { AlbaTypes::String($val.to_string()) };
-    (Vec<u8>: $val:expr) => { AlbaTypes::Bytes($val) };
-    (&[u8]: $val:expr) => { AlbaTypes::Bytes($val) };
     (string: $val:expr) => { AlbaTypes::String($val.to_string()) };
+    (bytes: $val:expr) => { AlbaTypes::Bytes($val.to_vec()) };
     (u8: $val:expr) => { AlbaTypes::U8($val) };
     (u16: $val:expr) => { AlbaTypes::U16($val) };
     (u32: $val:expr) => { AlbaTypes::U32($val) };
@@ -361,9 +360,9 @@ macro_rules! alba {
     (6: $val:expr) => { AlbaTypes::F32($val) };
     (7: $val:expr) => { AlbaTypes::F64($val) };
     (8: $val:expr) => { AlbaTypes::Bool($val) };
-    (9: $val:expr) => { AlbaTypes::U32($val) };
-    (10: $val:expr) => { AlbaTypes::U64($val) };
-    (11: $val:expr) => { AlbaTypes::Bytes($val) };
+    (9: $val:expr) => { AlbaTypes::I32($val) };
+    (10: $val:expr) => { AlbaTypes::I64($val) };
+    (11: $val:expr) => { AlbaTypes::Bytes($val.to_vec()) };
 
     ($val:expr) => {
         $val.to_alba_alba_types()

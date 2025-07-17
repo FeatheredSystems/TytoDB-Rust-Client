@@ -52,8 +52,8 @@ impl Client {
         return DeleteContainerBuilder{ container: String::new() }
     }
 
-    pub fn build_batch_create_row() -> CreateRowBuilder{
-        return BatchCreateRowBuilder{ container: String::new(), value: (Vec::new(),Vec::new()) }
+    pub fn build_batch_create_rows() -> BatchCreateRowsBuilder{
+        return BatchCreateRowsBuilder{ container: String::new(), value: (Vec::new(),Vec::new()) }
     }
 
     pub fn build_create_row() -> CreateRowBuilder{
@@ -78,37 +78,3 @@ impl Client {
 }
 
 
-/// Create and returns a logic operator enum
-/// ### Panics
-/// The macro do not panic
-/// ### Errors
-/// There is no errors from the macro itself
-#[macro_export]
-macro_rules! lo {
-    (0) => { LogicalOperator::Equal };
-    (1) => { LogicalOperator::Diferent };
-    (2) => { LogicalOperator::Higher };
-    (3) => { LogicalOperator::Lower };
-    (4) => { LogicalOperator::HigherEquality };
-    (5) => { LogicalOperator::LowerEquality };
-    (6) => { LogicalOperator::StringContains };
-    (7) => { LogicalOperator::StringContainsInsensitive };
-    (8) => { LogicalOperator::StringRegex };
-    
-    (eq) => { LogicalOperator::Equal };
-    (ne) => { LogicalOperator::Diferent };
-    (gt) => { LogicalOperator::Higher };
-    (lt) => { LogicalOperator::Lower };
-    (gte) => { LogicalOperator::HigherEquality };
-    (lte) => { LogicalOperator::LowerEquality };
-    (contains) => { LogicalOperator::StringContains };
-    (icontains) => { LogicalOperator::StringContainsInsensitive };
-    (regex) => { LogicalOperator::StringRegex };
-    
-    (=) => { LogicalOperator::Equal };
-    (!=) => { LogicalOperator::Diferent };
-    (>) => { LogicalOperator::Higher };
-    (<) => { LogicalOperator::Lower };
-    (>=) => { LogicalOperator::HigherEquality };
-    (<=) => { LogicalOperator::LowerEquality };
-}

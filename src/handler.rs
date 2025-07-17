@@ -12,7 +12,7 @@ pub struct SearchBuilder{
     pub conditions: (Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(u8,char)>)
 }
 
-pub trait BatchingItem{
+pub(crate) trait BatchingItem{
     fn into_batching_item(self) -> Commands;
 }
 
@@ -388,10 +388,12 @@ impl BatchCreateRowsBuilder {
 
 
 #[derive(Debug,Clone,Default)]
+
 pub struct BatchBuilder{
     pub transaction : bool,
-    pub value : Vec<Commands> 
+    pub(crate)value : Vec<Commands> 
 }
+
 impl BatchBuilder {
     pub fn new() -> Self {
         Self::default()
@@ -401,9 +403,10 @@ impl BatchBuilder {
     pub fn transaction(mut self,bool:bool) -> Self{
         self.transaction = bool;
         self
-    }
+    } 
 
     /// Insert a operation into the batching
+    #[allow(private_bounds)] 
     pub fn push<VERYNICEITEM:BatchingItem>(mut self, bin : VERYNICEITEM) -> Self{
         self.value.push(bin.into_batching_item());
         self

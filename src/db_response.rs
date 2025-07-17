@@ -1,4 +1,4 @@
-use crate::{albastream::{Error, ErrorKind}, dynamic_int::DynamicInteger, types::AlbaTypes};
+use crate::{albastream::Error, dynamic_int::DynamicInteger, types::AlbaTypes};
 
 #[derive(Debug)]
 pub struct Row (pub Vec<AlbaTypes>);
