@@ -480,31 +480,31 @@ impl Compile for DeleteContainer{
 
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct CreateContainer{
+pub(crate) struct CreateContainer{
     pub name : String,
     pub col_nam : Vec<String>,
     pub col_val : Vec<u8>,
 }
 #[derive(Debug, Clone, PartialEq)]
-pub struct CreateRow{
+pub(crate) struct CreateRow{
     pub col_nam : Vec<String>,
     pub col_val : Vec<AlbaTypes>,
     pub container : String
 }
 #[derive(Debug, Clone, PartialEq)]
-pub struct EditRow{
+pub(crate) struct EditRow{
     pub col_nam : Vec<String>,
     pub col_val : Vec<AlbaTypes>,
     pub container : String,
     pub conditions : (Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(u8,char)>)
 }
 #[derive(Debug, Clone, PartialEq)]
-pub struct DeleteRow{
+pub(crate) struct DeleteRow{
     pub container : String,
     pub conditions : Option<(Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(usize,char)>)>
 }
 #[derive(Debug, Clone, PartialEq)]
-pub struct DeleteContainer{
+pub(crate) struct DeleteContainer{
     pub container : String,
 }
 
@@ -553,7 +553,7 @@ impl <T:Compile+StandAloneDecompile> Compile for Vec<T>  {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Search{
+pub(crate) struct Search{
     pub container : AlbaContainer,
     pub conditions : (Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(u8,char)>),
     pub col_nam : Vec<String>,
@@ -717,7 +717,7 @@ impl StandAloneDecompile for Search {
 
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Commit{
+pub(crate) struct Commit{
     pub container : Option<String>,
 }
 
@@ -738,7 +738,7 @@ impl Compile for Commit{
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Rollback{
+pub(crate) struct Rollback{
     pub container : Option<String>,
 }
 impl Compile for Rollback{
@@ -758,7 +758,7 @@ impl Compile for Rollback{
 
 
 #[derive(Debug,Clone,PartialEq)]
-pub struct BatchCreateRows{
+pub(crate) struct BatchCreateRows{
     pub col_nam : Vec<String>,
     pub col_val : Vec<Vec<AlbaTypes>>,
     pub container : String
@@ -794,9 +794,9 @@ impl Compile for BatchCreateRows{
 }
 
 #[derive(Debug,Clone,PartialEq)]
-pub struct Batch{
-    pub(crate) transaction : bool,
-    pub(crate) commands : Vec<Commands> 
+pub(crate) struct Batch{
+    pub transaction : bool,
+    pub commands : Vec<Commands>,
 }
 impl Compile for Batch{
     fn compile(&self) -> Result<Vec<u8>,Error>{
@@ -840,7 +840,7 @@ impl Batch{
         let transaction = count < 0;
         let command_count = count.abs() as usize;
         
-        let mut commands = Vec::with_capacity(command_count);
+        let mut commands: Vec<Commands> = Vec::with_capacity(command_count);
         let mut offset = 5;        
         for _ in 0..command_count {
             if offset + 4 > bytes.len() {

@@ -29,7 +29,7 @@ impl Client {
                 return Err(Error::new(ErrorKind::InvalidInput, e.to_string().as_str()))
             }
         };
-        //println!("{:?}",b);
+        println!("{:?}",b);
         if b[0] == 1u8{
             return Err(Error::new(ErrorKind::Other, String::from_utf8_lossy(&b[1..]).to_string().as_str()))
         }

@@ -126,44 +126,9 @@ impl AlbaTypes {
         let id = input[0];
         match id {
             0 => {
-                if input.len() < 2 {
-                    return Err(Error::new(ErrorKind::InvalidInput, "Input too short for String type"));
-                }
-                let length_type = input[1];
-                let (dynint, header_size): (DynamicInteger, usize) = match length_type {
-                    0 => {
-                        if input.len() < 3 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U8 dynamic int"));
-                        }
-                        (DynamicInteger::U8((0, input[2])), 3)
-                    }
-                    1 => {
-                        if input.len() < 4 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U16 dynamic int"));
-                        }
-                        let mut load = [0u8; 2];
-                        load.copy_from_slice(&input[2..4]);
-                        (DynamicInteger::U16((1, u16::from_le_bytes(load))), 4)
-                    }
-                    2 => {
-                        if input.len() < 6 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U32 dynamic int"));
-                        }
-                        let mut load = [0u8; 4];
-                        load.copy_from_slice(&input[2..6]);
-                        (DynamicInteger::U32((2, u32::from_le_bytes(load))), 6)
-                    }
-                    3 => {
-                        if input.len() < 10 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U64 dynamic int"));
-                        }
-                        let mut load = [0u8; 8];
-                        load.copy_from_slice(&input[2..10]);
-                        (DynamicInteger::U64((3, u64::from_le_bytes(load))), 10)
-                    }
-                    _ => return Err(Error::new(ErrorKind::InvalidInput, "Invalid dynamic string length type")),
-                };
-                let str_len = dynint.usize();
+                let (dynint, bytes_read) = DynamicInteger::from_bytes(&input[1..])?;
+                let str_len = dynint.to_usize();
+                let header_size = 1 + bytes_read;
                 let total_size = header_size + str_len;
 
                 if input.len() < total_size {
@@ -261,44 +226,9 @@ impl AlbaTypes {
             }
 
             11 => {
-                if input.len() < 2 {
-                    return Err(Error::new(ErrorKind::InvalidInput, "Input too short for Bytes type"));
-                }
-                let length_type = input[1];
-                let (dynint, header_size): (DynamicInteger, usize) = match length_type {
-                    0 => {
-                        if input.len() < 3 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U8 dynamic int"));
-                        }
-                        (DynamicInteger::U8((0, input[2])), 3)
-                    }
-                    1 => {
-                        if input.len() < 4 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U16 dynamic int"));
-                        }
-                        let mut load = [0u8; 2];
-                        load.copy_from_slice(&input[2..4]);
-                        (DynamicInteger::U16((1, u16::from_le_bytes(load))), 4)
-                    }
-                    2 => {
-                        if input.len() < 6 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U32 dynamic int"));
-                        }
-                        let mut load = [0u8; 4];
-                        load.copy_from_slice(&input[2..6]);
-                        (DynamicInteger::U32((2, u32::from_le_bytes(load))), 6)
-                    }
-                    3 => {
-                        if input.len() < 10 {
-                            return Err(Error::new(ErrorKind::InvalidInput, "Truncated U64 dynamic int"));
-                        }
-                        let mut load = [0u8; 8];
-                        load.copy_from_slice(&input[2..10]);
-                        (DynamicInteger::U64((3, u64::from_le_bytes(load))), 10)
-                    }
-                    _ => return Err(Error::new(ErrorKind::InvalidInput, "Invalid dynamic bytes length type")),
-                };
-                let bytes_len = dynint.usize();
+                let (dynint, bytes_read) = DynamicInteger::from_bytes(&input[1..])?;
+                let bytes_len = dynint.to_usize();
+                let header_size = 1 + bytes_read;
                 let total_size = header_size + bytes_len;
 
                 if input.len() < total_size {

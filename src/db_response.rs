@@ -1,4 +1,4 @@
-use crate::{albastream::{Error, ErrorKind}, types::AlbaTypes};
+use crate::{albastream::{Error, ErrorKind}, dynamic_int::DynamicInteger, types::AlbaTypes};
 
 #[derive(Debug)]
 pub struct Row (pub Vec<AlbaTypes>);
@@ -8,7 +8,7 @@ impl Row{
     }
     pub fn encode(&self) -> Vec<u8>{
         let mut bytes : Vec<u8> = vec![];
-        bytes.extend_from_slice(&(self.0.len() as u64).to_le_bytes());
+        bytes.extend_from_slice(&DynamicInteger::from_usize(self.0.len()).compile());
 
         for i in self.0.iter(){
             bytes.extend_from_slice(&i.as_bytes());
@@ -16,20 +16,12 @@ impl Row{
         bytes
     }
     pub fn decode(input : &[u8]) -> Result<(Self,usize),Error>{
-        if input.len() < 8{
-            return Err(Error::new(ErrorKind::InvalidInput, "Invalid metadata"))
-        }
-        let length = {
-            let b = {
-                let mut load = [0u8;8];
-                load[0..].clone_from_slice(&input[0..8]);
-                u64::from_le_bytes(load)
-            };
-            b
-        };
-        let mut bytes_readen = 0;
-        let mut row = Vec::with_capacity(length as usize);
-
+        let (dyn_int, bytes_read_for_len) = DynamicInteger::from_bytes(input)?;
+        let length = dyn_int.to_usize();
+    
+        let mut bytes_readen = bytes_read_for_len;
+        let mut row = Vec::with_capacity(length);
+    
         for _ in 0..length{
             let r = AlbaTypes::from_bytes(&input[bytes_readen..])?;
             row.push(r.0);
@@ -49,7 +41,7 @@ impl DBResponse {
         let mut br = 0usize;
         let mut dbr = DBResponse{length:0,row_list:Vec::new()};
         while br < input.len(){
-            let r = Row::decode(input)?;
+            let r = Row::decode(&input[br..])?;
             br += r.1;
             dbr.length += 1;
             dbr.row_list.push(r.0);

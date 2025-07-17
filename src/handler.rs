@@ -5,6 +5,7 @@ use crate::commands::Search;
 use crate::commands::EditRow;
 
 /// API for building a `Search` structure
+#[derive(Debug,Default)]
 pub struct SearchBuilder{
     pub container: AlbaContainer,
     pub column_names: Vec<String>,
@@ -17,11 +18,7 @@ pub trait BatchingItem{
 
 impl SearchBuilder {
     pub fn new() -> Self {
-        Self {
-            container: String::new(),
-            column_names: Vec::new(),
-            conditions: (Vec::new(), Vec::new())
-        }
+        Self::default()
     }
 
     /// Add a new container to the `Search` structure being built.
@@ -65,7 +62,7 @@ impl SearchBuilder {
         }).compile()? as CompiledAlba)
     }
 }
-
+#[derive(Debug,Clone,Default)]
 pub struct EditRowBuilder{
     pub (crate) container : String,
     pub (crate) changes : (Vec<String>,Vec<AlbaTypes>),
@@ -73,11 +70,7 @@ pub struct EditRowBuilder{
 }
 impl EditRowBuilder {
     pub fn new() -> Self {
-        Self {
-            container: String::new(),
-            changes: (Vec::new(), Vec::new()),
-            conditions: (Vec::new(), Vec::new())
-        }
+        Self::default()
     }
     /// Set the container to the `EditRow` structure being built.
     pub fn put_container(mut self, container: String)-> Self{
@@ -130,16 +123,14 @@ impl EditRowBuilder {
 
 
 
+#[derive(Debug,Clone,Default)]
 pub struct DeleteRowBuilder{
     pub(crate) container : String,
     pub(crate) conditions : (Vec<(String,LogicalOperator,AlbaTypes)>,Vec<(usize,char)>)
 }
 impl DeleteRowBuilder {
     pub fn new() -> Self {
-        Self {
-            container: String::new(),
-            conditions: (Vec::new(), Vec::new())
-        }
+        Self::default()
     }
 
     /// Set the container to the `DeleteRow` structure being built.
@@ -176,15 +167,13 @@ impl DeleteRowBuilder {
     }
 }
 
-
+#[derive(Debug,Clone,Default)]
 pub struct DeleteContainerBuilder{
     pub(crate) container : String
 }
 impl DeleteContainerBuilder {
     pub fn new() -> Self {
-        Self {
-            container: String::new()
-        }
+        Self::default() 
     }
 
     /// Set the container to the `DeleteContainer` structure being built.
@@ -209,17 +198,14 @@ impl DeleteContainerBuilder {
     }
 }
 
-
+#[derive(Debug,Clone,Default)]
 pub struct CreateRowBuilder{
     pub(crate) container : String,
     pub(crate) value : (Vec<String>,Vec<AlbaTypes>)
 }
 impl CreateRowBuilder {
     pub fn new() -> Self {
-        Self {
-            container: String::new(),
-            value: (Vec::new(), Vec::new())
-        }
+        Self::default()
     }
     /// Set the container to the `CreateRow` structure being built.
     pub fn put_container(mut self, container: String)-> Self{
@@ -253,17 +239,14 @@ impl CreateRowBuilder {
 }
 
 
-
+#[derive(Debug,Clone,Default)]
 pub struct CreateContainerBuilder{
     pub container : String,
     pub(crate) headers : (Vec<String>,Vec<u8>)
 }
 impl CreateContainerBuilder {
-    pub fn new() -> Self {
-        Self {
-            container: String::new(),
-            headers: (Vec::new(), Vec::new())
-        }
+        pub fn new() -> Self {
+        Self::default()
     }
     /// Set the container to the `CreateContainer` structure being built.
     pub fn put_container(mut self, container: String)-> Self{
@@ -297,15 +280,13 @@ impl CreateContainerBuilder {
     }
 }
 
-
+#[derive(Debug,Clone,Default)]
 pub struct CommitBuilder{
     pub(crate) container : Option<String>,
 }
 impl CommitBuilder {
     pub fn new() -> Self {
-        Self {
-            container: None
-        }
+        Self::default()
     }
     /// Set the container you're commiting to
     pub fn set_container(mut self,container : String)-> Self{
@@ -328,14 +309,13 @@ impl CommitBuilder {
     }
 }
 
+#[derive(Debug,Clone,Default)]
 pub struct RollbackBuilder{
     pub(crate) container : Option<String>,
 }
 impl RollbackBuilder {
     pub fn new() -> Self {
-        Self {
-            container: None
-        }
+        Self::default()
     }
     /// Set the container to the `Rollback` structure being built.
     pub fn put_container(mut self, container: String)-> Self{
@@ -364,17 +344,14 @@ impl RollbackBuilder {
     }
 }
 
-
+#[derive(Debug,Clone,Default)]
 pub struct BatchCreateRowsBuilder{
     pub(crate) container : String,
     pub(crate) value : (Vec<String>,Vec<Vec<AlbaTypes>>)
 }
 impl BatchCreateRowsBuilder {
     pub fn new() -> Self {
-        Self {
-            container: String::new(),
-            value: (Vec::new(), Vec::new())
-        }
+        Self::default()
     }
     /// Set the container to the `BatchCreateRow` structure being built.
     pub fn put_container(mut self, container: String)-> Self{
@@ -410,35 +387,32 @@ impl BatchCreateRowsBuilder {
 }
 
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Default)]
 pub struct BatchBuilder{
-    pub(crate) transaction : bool,
-    pub(crate) value : Vec<Commands> 
+    pub transaction : bool,
+    pub value : Vec<Commands> 
 }
 impl BatchBuilder {
     pub fn new() -> Self {
-        Self {
-            transaction:false,
-            value : Vec::new()
-        }
+        Self::default()
     }
 
     /// Define whether the current batching is or not a transaction batching.
-    fn transaction(mut self,bool:bool) -> Self{
+    pub fn transaction(mut self,bool:bool) -> Self{
         self.transaction = bool;
         self
     }
 
     /// Insert a operation into the batching
-    fn push<VERYNICEITEM:BatchingItem>(mut self, bin : VERYNICEITEM) -> Self{
+    pub fn push<VERYNICEITEM:BatchingItem>(mut self, bin : VERYNICEITEM) -> Self{
         self.value.push(bin.into_batching_item());
         self
     }
     
-    fn finish(self) -> Result<CompiledAlba,Error>{
+    pub fn finish(self) -> Result<CompiledAlba,Error>{
         self.into_batching_item().compile()
     }
-    fn cloned_finish(self) -> Result<CompiledAlba,Error>{
+    pub fn cloned_finish(self) -> Result<CompiledAlba,Error>{
         self.clone().into_batching_item().compile()
     }
 }
