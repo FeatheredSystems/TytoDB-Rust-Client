@@ -246,7 +246,7 @@ impl AlbaTypes {
                     return Err(Error::new(ErrorKind::InvalidInput, "Trucated I128"));
                 }
                 let mut buf = [0u8; 16];
-                buf.copy_from_slice(&input[1..16]);
+                buf.copy_from_slice(&input[1..17]);
                 Ok((AlbaTypes::I128(i128::from_le_bytes(buf)), 17))
             }
 
@@ -415,6 +415,11 @@ impl ToAlbaAlbaTypes for i128 {
         AlbaTypes::I128(self.clone())
     }
 }
+impl ToAlbaAlbaTypes for (f64, f64) {
+    fn to_alba_alba_types(&self) -> AlbaTypes {
+        AlbaTypes::Geo(self.clone())
+    }
+}
 
 #[macro_export]
 macro_rules! alba {
@@ -456,6 +461,9 @@ macro_rules! alba {
     };
     (i64: $val:expr) => {
         AlbaTypes::I64($val)
+    };
+    ((f64,f64):$val:expr) => {
+        AlbaTypes::Geo($val)
     };
 
     (0: $val:expr) => {
